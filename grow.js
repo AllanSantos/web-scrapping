@@ -2,7 +2,7 @@ const puppeteer = require("puppeteer"); // importe o pacote puppeteer
 
 let scrape = async () => {
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
   }); // cria um browser. A propriedade headless define se o browser irá abrir com interface gráfica ou se apenas irá executar em segundo plano, sem GUI. false = irá abrir interface gráfica; true = não irá abrir interface gráfica
 
   const page = await browser.newPage(); // cria uma nova aba no navegador acima
@@ -15,7 +15,11 @@ let scrape = async () => {
     deviceScaleFactor: 1,
   });
 
+  console.log("Acessando pagina: 'https://server.growatt.com/login'");
+
   await page.goto("https://server.growatt.com/login"); // define a página que queremos acessar e a função goto navega até essa página
+
+  console.log("Fazendo login:");
 
   await page.type('[id="val_loginAccount"]', "CanadianSolar2022");
 
@@ -35,11 +39,13 @@ let scrape = async () => {
   //   });
   // });
 
+  console.log("Executando scrapping de componente:");
+
   await page.waitForSelector(".deviceBox");
 
   const dataObj = {};
 
-  dataObj["upc"] = await page.$$eval(
+  dataObj["table"] = await page.$$eval(
     ".deviceBox > table > tbody > tr > td",
     (table) => {
       return table.map((t) => t.textContent);
@@ -47,6 +53,8 @@ let scrape = async () => {
   );
 
   console.log(dataObj);
+
+  browser.close();
 
   /* let dataObj = [];
 
