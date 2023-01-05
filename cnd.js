@@ -17,15 +17,12 @@ let scrape = async () => {
 
   await page.goto("https://monitoring.csisolar.com/login"); // define a página que queremos acessar e a função goto navega até essa página
 
-  // await page.evaluate(() => {
-  //   document.querySelector("button.functionBtn.tra-fast::after").click();
-  // });
+  await page.waitForSelector(
+    "#app > div.frame-login > div:nth-child(3) > div > div.upDown > button.functionBtn.tra-fast"
+  );
 
-  await page.$eval(
-    "div.window.window-bg.window-alert.window-lock",
-    (e, randomDate) => {
-      e.setAttribute("status", true), randomDate;
-    }
+  await page.click(
+    "#app > div.frame-login > div:nth-child(3) > div > div.upDown > button.functionBtn.tra-fast"
   );
 
   await page.type('[name="eMail"]', "samuel.ovanessian@canadiansolar.com");
@@ -35,12 +32,12 @@ let scrape = async () => {
   const btnLogin = await page.waitForSelector('[name="login"]', {
     visible: true,
   });
+
   console.log(btnLogin);
+
   await btnLogin.click();
 
-  //await page.$eval('button[name="login"]', (form) => form.click());
-
-  //browser.close(); // fecha o browser, indicando que finalizamos o scraping
+  // await browser.close(); // fecha o browser, indicando que finalizamos o scraping
 };
 
 scrape()
