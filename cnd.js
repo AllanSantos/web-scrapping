@@ -1,5 +1,4 @@
 const puppeteer = require("puppeteer"); // importe o pacote puppeteer
-const fs = require("fs"); // importe o pacote fs
 const cron = require("node-cron"); // importe o pacote node-cron
 const {MongoClient} = require("mongodb"); // importe o pacote mongodb
 
@@ -42,8 +41,6 @@ try {
       visible: true,
     });
 
-    console.log(btnLogin);
-
     await btnLogin.click();
 
     // Espera a página carregar totalmente.
@@ -82,7 +79,7 @@ try {
     );
 
     // Organiza os dados obtidos.
-    const table = {
+    const proddata = {
       potatual,
       potinstal,
       proddiaria,
@@ -92,22 +89,6 @@ try {
       date
     };
 
-    // Vetor onde armazenaremos todos os dados coletados.
-    const proddata = [];
-
-    proddata.push(table);
-
-    // Insere os dados em um arquivo JSON.
-    try {
-      fs.writeFileSync(
-        "proddata.json",
-        JSON.stringify({proddata:proddata}, null, 4),
-        console.log("Dados obtidos e atualizados.")
-      )
-    } catch (error) {
-      console.log(error);
-    }
-
     try {
       // Define e inicia a conexão com o MongoDB, dentro do projeto canadiansolar e cluster csisolar.
       const client = new MongoClient("mongodb+srv://admin:Kron2023@csisolar.mjxenli.mongodb.net/?retryWrites=true&w=majority");
@@ -116,10 +97,10 @@ try {
       const db = client.db("scrape");
       const prodCollection = db.collection("proddata");
       // Insere os dados na coleção.
-      await prodCollection.insertOne(table);
+      await prodCollection.insertOne(proddata);
       // Fecha a conexão com o MongoDB.
       await client.close();
-      console.log("Dados inseridos no MongoDB.");
+      console.log("Dados obtidos com sucesso.");
     } catch (error) {
       console.log(error);
     }
