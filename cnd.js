@@ -1,11 +1,14 @@
 const puppeteer = require("puppeteer"); // importe o pacote puppeteer
 const fs = require("fs"); // importe o pacote fs
-const cron = require("node-cron"); // importe o pacote cron
+const cron = require("node-cron"); // importe o pacote node-cron
+const {MongoClient} = require("mongodb"); // importe o pacote mongodb
 
-// Executa a função a cada dois minutos.
 try {
+  // Executa a função a cada dois minutos.
   cron.schedule("*/2 * * * *", async () => {
-    console.log("Job executando: " + Date())
+    const date = Date();
+
+    console.log("Job executando: " + date);
 
     const browser = await puppeteer.launch({
       headless: false,
@@ -85,9 +88,11 @@ try {
       proddiaria,
       prodmensal,
       prodanual,
-      prodtotal
+      prodtotal,
+      date
     };
 
+    // Vetor onde armazenaremos todos os dados coletados.
     const proddata = [];
 
     proddata.push(table);
@@ -96,13 +101,29 @@ try {
     try {
       fs.writeFileSync(
         "proddata.json",
-        JSON.stringify({data:proddata}, null, 4),
+        JSON.stringify({proddata:proddata}, null, 4),
         console.log("Dados obtidos e atualizados.")
       )
     } catch (error) {
       console.log(error);
     }
-    
+
+    try {
+      // Define e inicia a conexão com o MongoDB, dentro do projeto canadiansolar e cluster csisolar.
+      const client = new MongoClient("mongodb+srv://admin:Kron2023@csisolar.mjxenli.mongodb.net/?retryWrites=true&w=majority");
+      await client.connect();
+      // Define o banco de dados scrape e a coleção proddata.
+      const db = client.db("scrape");
+      const prodCollection = db.collection("proddata");
+      // Insere os dados na coleção.
+      await prodCollection.insertOne(table);
+      // Fecha a conexão com o MongoDB.
+      await client.close();
+      console.log("Dados inseridos no MongoDB.");
+    } catch (error) {
+      console.log(error);
+    }
+
     await browser.close(); // fecha o browser, indicando que finalizamos o scraping
   });
 } catch (error) {

@@ -1,12 +1,13 @@
 {
-    "data": [
+    "proddata": [
         {
-            "potatual": "32.33 MW",
-            "potinstal": "90.98 GWp",
-            "proddiaria": "412.43 MWh",
-            "prodmensal": "11.37 GWh",
-            "prodanual": "11.37 GWh",
-            "prodtotal": "387.31 GWh"
+            "potatual": "29.17 MW",
+            "potinstal": "91.03 GWp",
+            "proddiaria": "292.9 MWh",
+            "prodmensal": "13.17 GWh",
+            "prodanual": "13.17 GWh",
+            "prodtotal": "396.73 GWh",
+            "date": "Fri Jan 13 2023 09:18:00 GMT-0300 (Horário Padrão de Brasília)"
         }
     ]
 }
